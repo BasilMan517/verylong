@@ -86,7 +86,7 @@ export default function Home() {
           <p className="eyebrow">Department of Questionable Longevity</p>
           <h1>升天档案局</h1>
           <p className="subhead">
-            一份不具法律效力的结局报告。我们不问你觉得自己会怎么死，只研究桌面、冰箱、家族群、凌晨状态这些更诚实的证据。
+            一份不具法律效力的结局报告。我们会通过桌面、冰箱、家族群、凌晨状态这些比体检报告更诚实的证据，告诉你如何升天，何时升天。
           </p>
         </div>
         <div className="masthead-right">
@@ -188,6 +188,7 @@ export default function Home() {
         {stage === "result" && result && (
           <section className="result-stage">
             <div className="death-certificate" id="certificate">
+              <span className="cert-watermark">UNOFFICIAL</span>
               <div className="cert-header">
                 <div>
                   <p className="eyebrow">Unofficial End-of-Game Certificate</p>
@@ -234,14 +235,15 @@ export default function Home() {
               </article>
 
               <article className="twin-card">
-                <p className="eyebrow">Doom Twin Match</p>
-                <h2>{result.twin.alias}</h2>
+                <p className="eyebrow">Doom Twin</p>
+                <h2>最佳升天道友</h2>
                 <div className="match-score">
                   <span>{result.twin.score}%</span>
                   <small>作死路径相似度</small>
                 </div>
+                <h3 className="twin-alias">{result.twin.alias} — {result.twin.archetype}</h3>
                 <p>
-                  你们都属于「{result.twin.archetype}」附近的宇宙。TA 公开的健康标签显示：
+                  你们在升天路线上高度重合。TA 公开的健康标签：
                   {result.twin.publicHealthTags.join("、") || "尚未公开支线"}。
                 </p>
                 <div className="shared-tags">

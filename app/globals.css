@@ -339,6 +339,7 @@ h3 {
 .shared-tags span {
   background: var(--panel-2);
   border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius: 3px;
   color: var(--ink);
   font-size: 13px;
   padding: 7px 9px;
@@ -426,6 +427,13 @@ h3 {
   min-height: 116px;
   padding: 16px;
   text-align: left;
+  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.answer-option:hover {
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
 }
 
 .answer-option span {
@@ -454,6 +462,7 @@ h3 {
   border: 2px solid var(--line);
   min-height: 46px;
   padding: 12px 16px;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease, filter 140ms ease;
 }
 
 .ghost-button {
@@ -461,10 +470,21 @@ h3 {
   color: var(--ink);
 }
 
+.ghost-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
 .primary-button {
   background: var(--accent);
   color: var(--panel);
   font-weight: 900;
+}
+
+.primary-button:hover:not(:disabled) {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px var(--shadow);
 }
 
 .loading-card {
@@ -513,8 +533,14 @@ h3 {
 }
 
 .loading-card p {
+  animation: pulse 1.8s ease-in-out infinite;
   color: var(--muted);
   font-size: 18px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .result-stage {
@@ -638,6 +664,13 @@ h3 {
 .twin-card,
 .rewrite-card {
   padding: 24px;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.profile-card:hover,
+.twin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 12px 12px 0 var(--shadow);
 }
 
 .profile-card p,
@@ -684,6 +717,31 @@ h3 {
   background: var(--panel-2);
   color: var(--ink);
   text-align: left;
+}
+
+.rewrite-actions button:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.twin-alias {
+  color: var(--accent-2);
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.cert-watermark {
+  color: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: clamp(80px, 12vw, 140px);
+  font-weight: 950;
+  left: 50%;
+  letter-spacing: 12px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  user-select: none;
+  white-space: nowrap;
 }
 
 .rewrite-result {
