@@ -759,9 +759,11 @@ h3 {
 }
 
 .twin-name {
-  font-size: clamp(32px, 5vw, 52px);
+  color: var(--accent);
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 950;
   line-height: 1;
-  margin-bottom: 4px;
+  margin: 0 0 4px;
 }
 
 .twin-archetype {

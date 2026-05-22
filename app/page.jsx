@@ -263,7 +263,8 @@ export default function Home() {
                   <p className="eyebrow">Doom Twin</p>
                   <span className="match-score-badge">{result.twin.score}% 重合</span>
                 </div>
-                <h2 className="twin-name">{result.twin.alias}</h2>
+                <h2>最佳升天道友</h2>
+                <p className="twin-name">{result.twin.alias}</p>
                 <p className="twin-archetype">{result.twin.archetype}</p>
                 <p>
                   你们在升天路线上高度重合。TA 公开的健康标签：
