@@ -615,9 +615,9 @@ h3 {
 
 .cert-seal {
   flex: 0 0 auto;
-  height: 108px;
+  height: 148px;
   transform: rotate(12deg);
-  width: 108px;
+  width: 148px;
 }
 
 .age-hero {

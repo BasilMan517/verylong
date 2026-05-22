@@ -318,7 +318,7 @@ export default function Home() {
 
 function CertSeal() {
   return (
-    <svg className="cert-seal" viewBox="0 0 200 200" width="108" height="108">
+    <svg className="cert-seal" viewBox="0 0 200 200" width="148" height="148">
       <defs>
         <path id="topArc" d="M100,100 m-75,0 a75,75 0 1,1 150,0 a75,75 0 1,1 -150,0" />
         <path id="btmArc" d="M100,100 m75,0 a75,75 0 1,1 -150,0 a75,75 0 1,1 150,0" />
