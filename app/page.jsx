@@ -29,10 +29,11 @@ export default function Home() {
 
   const current = questions[step];
   const progress = Math.round((Object.keys(answers).length / questions.length) * 100);
-  const selected = answers[current.id];
+  const selected = current.inputType === "text" ? undefined : answers[current.id];
+  const aliasValue = answers["alias"] || alias;
   const chosenTags = useMemo(() => {
     return questions
-      .map((question) => question.answers[answers[question.id]]?.tags || [])
+      .map((question) => question.answers?.[answers[question.id]]?.tags || [])
       .flat()
       .filter((tag, index, list) => list.indexOf(tag) === index)
       .slice(0, 7);
@@ -47,6 +48,12 @@ export default function Home() {
   }
 
   async function goNext() {
+    if (current.inputType === "text") {
+      if (!alias.trim()) return;
+      setAnswers((prev) => ({ ...prev, [current.id]: alias.trim() }));
+      setStep((value) => value + 1);
+      return;
+    }
     if (selected === undefined) return;
     if (step < questions.length - 1) {
       setStep((value) => value + 1);
@@ -63,7 +70,7 @@ export default function Home() {
     const response = await fetch("/api/report", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ alias, answers }),
+      body: JSON.stringify({ alias: answers["alias"] || alias, answers }),
     });
     const data = await response.json();
     setResult(data);
@@ -122,7 +129,7 @@ export default function Home() {
           <div className="stamp">UNOFFICIAL</div>
           <label className="alias-field">
             <span>档案代号</span>
-            <input value={alias} onChange={(event) => setAlias(event.target.value)} placeholder="匿名打工人" />
+            <strong className="alias-display">{aliasValue || "等待报名..."}</strong>
           </label>
           <div className="meter-block">
             <div className="meter-label">
@@ -149,25 +156,39 @@ export default function Home() {
             <div className="question-body" key={step}>
               <h2>{current.title}</h2>
               <p>{current.hint}</p>
-              <div className="answer-grid">
-                {current.answers.map((answer, index) => (
-                  <button
-                    className={selected === index ? "answer-option selected" : "answer-option"}
-                    key={answer.label}
-                    onClick={() => chooseAnswer(index)}
-                    type="button"
-                  >
-                    <span>{String.fromCharCode(65 + index)}</span>
-                    {answer.label}
-                  </button>
-                ))}
-              </div>
+              {current.inputType === "text" ? (
+                <div className="text-input-block">
+                  <input
+                    className="name-input"
+                    type="text"
+                    value={alias}
+                    onChange={(event) => setAlias(event.target.value)}
+                    placeholder={current.placeholder}
+                    maxLength={24}
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                <div className="answer-grid">
+                  {current.answers.map((answer, index) => (
+                    <button
+                      className={selected === index ? "answer-option selected" : "answer-option"}
+                      key={answer.label}
+                      onClick={() => chooseAnswer(index)}
+                      type="button"
+                    >
+                      <span>{String.fromCharCode(65 + index)}</span>
+                      {answer.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="panel-actions">
               <button className="ghost-button" disabled={step === 0} onClick={goBack} type="button">
                 上一步
               </button>
-              <button className="primary-button" disabled={selected === undefined} onClick={goNext} type="button">
+              <button className="primary-button" disabled={current.inputType === "text" ? !alias.trim() : selected === undefined} onClick={goNext} type="button">
                 {step === questions.length - 1 ? "签发假证明" : "下一份证据"}
               </button>
             </div>
@@ -197,11 +218,14 @@ export default function Home() {
                 <CertSeal />
               </div>
               <div className="age-hero">
-                <span className="age-number">{result.profile.estimatedAge}</span>
-                <div className="age-meta">
-                  <span className="age-unit">岁</span>
-                  <span className="age-label">预计结局年龄</span>
-                  <span className="age-cause">{result.profile.cause}</span>
+                <div className="cause-line">
+                  <span className="cause-prefix">由于</span>
+                  <span className="cause-text">{result.profile.cause}</span>
+                </div>
+                <div className="age-line">
+                  <span className="age-prefix">于</span>
+                  <span className="age-number">{result.profile.estimatedAge}</span>
+                  <span className="age-unit">岁升天</span>
                 </div>
               </div>
               <div className="cert-grid">
@@ -235,21 +259,23 @@ export default function Home() {
               </article>
 
               <article className="twin-card">
-                <p className="eyebrow">Doom Twin</p>
-                <h2>最佳升天道友</h2>
-                <div className="match-score">
-                  <span>{result.twin.score}%</span>
-                  <small>作死路径相似度</small>
+                <div className="twin-header">
+                  <p className="eyebrow">Doom Twin</p>
+                  <span className="match-score-badge">{result.twin.score}% 重合</span>
                 </div>
-                <h3 className="twin-alias">{result.twin.alias} — {result.twin.archetype}</h3>
+                <h2 className="twin-name">{result.twin.alias}</h2>
+                <p className="twin-archetype">{result.twin.archetype}</p>
                 <p>
                   你们在升天路线上高度重合。TA 公开的健康标签：
                   {result.twin.publicHealthTags.join("、") || "尚未公开支线"}。
                 </p>
-                <div className="shared-tags">
-                  {result.twin.shared.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
+                <div>
+                  <span className="meter-label" style={{ marginBottom: 8 }}>共同作死标签</span>
+                  <div className="shared-tags">
+                    {result.twin.shared.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
                 </div>
               </article>
             </div>
