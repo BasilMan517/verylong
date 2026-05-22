@@ -615,9 +615,9 @@ h3 {
 
 .cert-seal {
   flex: 0 0 auto;
-  height: 148px;
+  height: 200px;
   transform: rotate(12deg);
-  width: 148px;
+  width: 200px;
 }
 
 .age-hero {
@@ -881,4 +881,81 @@ h3 {
   .death-certificate {
     box-shadow: none;
   }
+}
+
+.twin-message-block {
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+.twin-message-input {
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  color: var(--ink);
+  flex: 1;
+  outline: none;
+  padding: 10px 12px;
+}
+
+.twin-message-input:focus {
+  border-color: var(--accent);
+}
+
+.twin-message-block .primary-button {
+  flex-shrink: 0;
+}
+
+.message-sent-note {
+  color: var(--accent);
+  font-weight: 800;
+  margin: 0;
+}
+
+.inbox-card {
+  background: color-mix(in srgb, var(--panel) 94%, transparent);
+  border: 2px solid var(--line);
+  box-shadow: 8px 8px 0 var(--shadow);
+  padding: 24px;
+}
+
+.inbox-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.inbox-item {
+  background: var(--panel-2);
+  border: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  padding: 14px;
+}
+
+.inbox-meta {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.inbox-meta strong {
+  color: var(--accent);
+  font-size: 15px;
+}
+
+.inbox-meta span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.inbox-item p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.inbox-toggle {
+  position: relative;
 }

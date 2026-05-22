@@ -29,3 +29,19 @@ with check (false);
 
 create index if not exists profiles_created_at_idx on public.profiles (created_at desc);
 create index if not exists profiles_tags_idx on public.profiles using gin (tags);
+
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  sender_case_id text not null,
+  sender_alias text not null,
+  receiver_case_id text not null,
+  receiver_alias text not null,
+  body text not null,
+  read boolean not null default false
+);
+
+alter table public.messages enable row level security;
+
+create index if not exists messages_receiver_idx on public.messages (receiver_case_id, created_at desc);
+create index if not exists messages_sender_idx on public.messages (sender_case_id, created_at desc);

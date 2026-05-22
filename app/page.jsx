@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { questions } from "@/lib/doom";
 
 const loadingLines = [
@@ -26,6 +26,30 @@ export default function Home() {
   const [loadingIndex, setLoadingIndex] = useState(0);
   const [result, setResult] = useState(null);
   const [rewrite, setRewrite] = useState("");
+  const [myCaseId, setMyCaseId] = useState(null);
+  const [myAlias, setMyAlias] = useState("");
+  const [twinMessage, setTwinMessage] = useState("");
+  const [messageSent, setMessageSent] = useState(false);
+  const [inbox, setInbox] = useState([]);
+  const [showInbox, setShowInbox] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("doom_case_id");
+    const storedAlias = localStorage.getItem("doom_alias");
+    if (stored) {
+      setMyCaseId(stored);
+      setMyAlias(storedAlias || "");
+      fetchInbox(stored);
+    }
+  }, []);
+
+  const fetchInbox = useCallback(async (caseId) => {
+    try {
+      const res = await fetch(`/api/messages?caseId=${caseId}`);
+      const data = await res.json();
+      if (data.ok) setInbox(data.received || []);
+    } catch {}
+  }, []);
 
   const current = questions[step];
   const progress = Math.round((Object.keys(answers).length / questions.length) * 100);
@@ -75,6 +99,13 @@ export default function Home() {
     const data = await response.json();
     setResult(data);
     setStage("result");
+    if (data.caseId) {
+      localStorage.setItem("doom_case_id", data.caseId);
+      localStorage.setItem("doom_alias", data.alias);
+      setMyCaseId(data.caseId);
+      setMyAlias(data.alias);
+      fetchInbox(data.caseId);
+    }
   }
 
   function restart() {
@@ -83,7 +114,31 @@ export default function Home() {
     setStep(0);
     setResult(null);
     setRewrite("");
+    setMessageSent(false);
+    setTwinMessage("");
     setStage("intake");
+  }
+
+  async function sendTwinMessage() {
+    if (!twinMessage.trim() || !result?.twin?.caseId || !myCaseId) return;
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          senderCaseId: myCaseId,
+          senderAlias: myAlias || result.alias,
+          receiverCaseId: result.twin.caseId,
+          receiverAlias: result.twin.alias,
+          body: twinMessage.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setMessageSent(true);
+        setTwinMessage("");
+      }
+    } catch {}
   }
 
   return (
@@ -275,6 +330,27 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
+                {result.twin.caseId && (
+                  <div className="twin-message-block">
+                    {messageSent ? (
+                      <p className="message-sent-note">遗言已送达，等待道友回复。</p>
+                    ) : (
+                      <>
+                        <input
+                          className="twin-message-input"
+                          type="text"
+                          value={twinMessage}
+                          onChange={(e) => setTwinMessage(e.target.value)}
+                          placeholder="给道友留一句遗言..."
+                          maxLength={200}
+                        />
+                        <button className="primary-button" onClick={sendTwinMessage} disabled={!twinMessage.trim()} type="button">
+                          发送
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </article>
             </div>
 
@@ -299,6 +375,11 @@ export default function Home() {
             </div>
 
             <div className="panel-actions result-actions">
+              {myCaseId && inbox.length > 0 && (
+                <button className="ghost-button inbox-toggle" onClick={() => setShowInbox((v) => !v)} type="button">
+                  收件箱 ({inbox.length})
+                </button>
+              )}
               <button className="ghost-button" onClick={restart} type="button">
                 重新开档
               </button>
@@ -306,6 +387,24 @@ export default function Home() {
                 打印这份假证明
               </button>
             </div>
+
+            {showInbox && inbox.length > 0 && (
+              <div className="inbox-card">
+                <p className="eyebrow">Doom Mail</p>
+                <h3>来自道友的遗言</h3>
+                <div className="inbox-list">
+                  {inbox.map((msg) => (
+                    <div className="inbox-item" key={msg.id}>
+                      <div className="inbox-meta">
+                        <strong>{msg.sender_alias}</strong>
+                        <span>{new Date(msg.created_at).toLocaleDateString("zh-CN")}</span>
+                      </div>
+                      <p>{msg.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
       </section>
@@ -315,7 +414,7 @@ export default function Home() {
 
 function CertSeal() {
   return (
-    <svg className="cert-seal" viewBox="0 0 200 200" width="148" height="148">
+    <svg className="cert-seal" viewBox="0 0 200 200" width="200" height="200">
       <defs>
         <path id="topArc" d="M100,100 m-75,0 a75,75 0 1,1 150,0 a75,75 0 1,1 -150,0" />
         <path id="btmArc" d="M100,100 m75,0 a75,75 0 1,1 -150,0 a75,75 0 1,1 150,0" />
