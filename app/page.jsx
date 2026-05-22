@@ -89,42 +89,33 @@ export default function Home() {
             一份不具法律效力的结局报告。我们不问你觉得自己会怎么死，只研究桌面、冰箱、家族群、凌晨状态这些更诚实的证据。
           </p>
         </div>
-        <div className="status-card" aria-label="当前档案状态">
-          <span className="status-dot" />
-          <span>Case file open</span>
-          <strong>{result?.caseId || "DT-PENDING"}</strong>
+        <div className="masthead-right">
+          <div className="theme-switcher">
+            {[
+              { id: "bureau", label: "档案" },
+              { id: "terminal", label: "终端" },
+              { id: "claim", label: "理赔" },
+            ].map((t) => (
+              <button
+                key={t.id}
+                className={`theme-chip${theme === t.id ? " active" : ""}`}
+                onClick={() => setTheme(t.id)}
+                type="button"
+                title={t.label}
+              >
+                <span className={`theme-swatch ${t.id}-swatch`} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="status-card" aria-label="当前档案状态">
+            <span className="status-dot" />
+            <span>Case file open</span>
+            <strong>{result?.caseId || "DT-PENDING"}</strong>
+          </div>
         </div>
       </section>
 
-      <section className="theme-panel" aria-labelledby="themeTitle">
-        <div className="section-heading">
-          <p className="eyebrow">Visual direction</p>
-          <h2 id="themeTitle">三套可选 UI 风格</h2>
-        </div>
-        <div className="theme-grid">
-          <ThemeOption
-            active={theme === "bureau"}
-            swatch="bureau"
-            title="地府医院 Bureaucracy"
-            text="旧档案袋、红章、病历表，像一份不该流出的行政文件。"
-            onClick={() => setTheme("bureau")}
-          />
-          <ThemeOption
-            active={theme === "terminal"}
-            swatch="terminal"
-            title="赛博寿命终端"
-            text="黑底荧光、扫描线、终端噪声，像未来诊所的禁用页面。"
-            onClick={() => setTheme("terminal")}
-          />
-          <ThemeOption
-            active={theme === "claim"}
-            swatch="claim"
-            title="荒诞保险理赔"
-            text="保单、理赔、风险条款，把人生作死行为做成合同。"
-            onClick={() => setTheme("claim")}
-          />
-        </div>
-      </section>
 
       <section className="workspace">
         <aside className="case-sidebar">
@@ -155,20 +146,22 @@ export default function Home() {
                 Question {String(step + 1).padStart(2, "0")} / {String(questions.length).padStart(2, "0")}
               </span>
             </div>
-            <h2>{current.title}</h2>
-            <p>{current.hint}</p>
-            <div className="answer-grid">
-              {current.answers.map((answer, index) => (
-                <button
-                  className={selected === index ? "answer-option selected" : "answer-option"}
-                  key={answer.label}
-                  onClick={() => chooseAnswer(index)}
-                  type="button"
-                >
-                  <span>{String.fromCharCode(65 + index)}</span>
-                  {answer.label}
-                </button>
-              ))}
+            <div className="question-body" key={step}>
+              <h2>{current.title}</h2>
+              <p>{current.hint}</p>
+              <div className="answer-grid">
+                {current.answers.map((answer, index) => (
+                  <button
+                    className={selected === index ? "answer-option selected" : "answer-option"}
+                    key={answer.label}
+                    onClick={() => chooseAnswer(index)}
+                    type="button"
+                  >
+                    <span>{String.fromCharCode(65 + index)}</span>
+                    {answer.label}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="panel-actions">
               <button className="ghost-button" disabled={step === 0} onClick={goBack} type="button">
@@ -197,16 +190,22 @@ export default function Home() {
             <div className="death-certificate" id="certificate">
               <div className="cert-header">
                 <div>
-                  <p className="eyebrow">Unofficial Death Certificate</p>
-                  <h2>不具法律效力的死亡证明</h2>
+                  <p className="eyebrow">Unofficial End-of-Game Certificate</p>
+                  <h2>不具法律效力的结局报告</h2>
                 </div>
-                <div className="cert-seal">VOID</div>
+                <CertSeal />
+              </div>
+              <div className="age-hero">
+                <span className="age-number">{result.profile.estimatedAge}</span>
+                <div className="age-meta">
+                  <span className="age-unit">岁</span>
+                  <span className="age-label">预计结局年龄</span>
+                  <span className="age-cause">{result.profile.cause}</span>
+                </div>
               </div>
               <div className="cert-grid">
                 <CertField label="档案编号" value={result.caseId} />
                 <CertField label="档案代号" value={result.alias} />
-                <CertField label="预计升天年龄" value={`${result.profile.estimatedAge}.4 岁`} />
-                <CertField label="主要升天原因" value={result.profile.cause} />
                 <CertField label="最后一句话" value={result.profile.report.lastWords} />
                 <CertField label="数据保存" value={result.saved ? "已写入病友池" : "本地演示模式"} />
               </div>
@@ -288,13 +287,31 @@ export default function Home() {
   );
 }
 
-function ThemeOption({ active, swatch, title, text, onClick }) {
+function CertSeal() {
   return (
-    <button className={active ? "theme-option active" : "theme-option"} onClick={onClick} type="button">
-      <span className={`theme-swatch ${swatch}-swatch`} />
-      <strong>{title}</strong>
-      <small>{text}</small>
-    </button>
+    <svg className="cert-seal" viewBox="0 0 200 200" width="108" height="108">
+      <defs>
+        <path id="topArc" d="M100,100 m-75,0 a75,75 0 1,1 150,0 a75,75 0 1,1 -150,0" />
+        <path id="btmArc" d="M100,100 m75,0 a75,75 0 1,1 -150,0 a75,75 0 1,1 150,0" />
+        <filter id="rough">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+      <g transform="rotate(-8, 100, 100)" filter="url(#rough)" opacity="0.85">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="var(--accent)" strokeWidth="5" />
+        <circle cx="100" cy="100" r="84" fill="none" stroke="var(--accent)" strokeWidth="1.5" opacity="0.5" />
+        <circle cx="100" cy="100" r="56" fill="none" stroke="var(--accent)" strokeWidth="1.5" opacity="0.4" />
+        <polygon points="100,52 106,74 130,74 111,88 117,110 100,96 83,110 89,88 70,74 94,74" fill="var(--accent)" opacity="0.6" />
+        <text fill="var(--accent)" fontFamily="'Noto Serif SC',serif" fontSize="13" fontWeight="900" letterSpacing="4" opacity="0.8">
+          <textPath href="#topArc" startOffset="25%" textAnchor="middle">VERYLONG</textPath>
+        </text>
+        <text fill="var(--accent)" fontFamily="'Noto Serif SC',serif" fontSize="11" fontWeight="800" letterSpacing="3" opacity="0.7">
+          <textPath href="#btmArc" startOffset="25%" textAnchor="middle">END OF GAME</textPath>
+        </text>
+        <text x="100" y="136" textAnchor="middle" fill="var(--accent)" fontFamily="'Noto Serif SC',serif" fontSize="20" fontWeight="900" letterSpacing="4" opacity="0.8">结局认证</text>
+      </g>
+    </svg>
   );
 }
 
