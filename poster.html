@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>verylong — End of Game Certificate</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background: #e9dfcf;
+    color: #231a14;
+    font-family: ui-serif, 'Noto Serif SC', 'Songti SC', Georgia, serif;
+    overflow: hidden;
+  }
+
+  /* grid texture */
+  .page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(35,26,20,0.05) 1px, transparent 1px),
+      linear-gradient(rgba(35,26,20,0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .page::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 160px rgba(35,26,20,0.2);
+    pointer-events: none;
+  }
+
+  /* ---- HEADER ---- */
+  .cert-header {
+    position: absolute;
+    top: 52px;
+    left: 90px;
+    right: 90px;
+    border-bottom: 3px double #2d2118;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 800;
+    color: #735f4e;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+  }
+  .cert-title {
+    font-size: 52px;
+    font-weight: 900;
+    color: #231a14;
+    letter-spacing: 14px;
+    margin-left: 14px;
+    line-height: 1.15;
+  }
+  .case-info {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .case-info .row { margin-bottom: 6px; }
+  .case-info .label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #735f4e;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .case-info .value {
+    font-size: 16px;
+    color: #231a14;
+    font-weight: 700;
+  }
+
+  /* ---- CERT GRID ---- */
+  .cert-grid {
+    position: absolute;
+    top: 190px;
+    left: 90px;
+    width: 820px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+  .cert-cell {
+    border: 1px solid #2d2118;
+    padding: 16px 18px;
+    min-height: 88px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .cert-cell .label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #735f4e;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .cert-cell .value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #231a14;
+    line-height: 1.5;
+  }
+
+  /* ---- CERT BODY ---- */
+  .cert-body {
+    position: absolute;
+    top: 520px;
+    left: 90px;
+    width: 820px;
+    border-left: 6px solid #b52d26;
+    padding-left: 20px;
+  }
+  .cert-body h3 {
+    font-size: 14px;
+    font-weight: 800;
+    color: #231a14;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+  }
+  .cert-body p {
+    font-size: 16px;
+    color: #735f4e;
+    line-height: 1.8;
+    margin-bottom: 18px;
+  }
+
+  /* ---- TAG ROW ---- */
+  .tag-row {
+    position: absolute;
+    top: 740px;
+    left: 90px;
+    width: 820px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 12px;
+    font-weight: 800;
+    color: #735f4e;
+    background: rgba(45,33,24,0.08);
+    padding: 5px 12px;
+    border: 1px solid rgba(45,33,24,0.15);
+  }
+
+  /* ---- RIGHT COLUMN ---- */
+  .right-col {
+    position: absolute;
+    top: 190px;
+    left: 960px;
+    right: 90px;
+  }
+
+  /* twin match card */
+  .twin-card {
+    padding: 24px;
+    background: #fffaf0;
+    margin-bottom: 20px;
+  }
+  .twin-card .eyebrow { margin-bottom: 4px; }
+  .twin-card h2 {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+  .match-score {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .match-score span {
+    font-size: 52px;
+    font-weight: 950;
+    color: #b52d26;
+    line-height: 1;
+  }
+  .match-score small {
+    font-size: 12px;
+    font-weight: 800;
+    color: #735f4e;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+  }
+  .twin-card p {
+    font-size: 14px;
+    color: #735f4e;
+    line-height: 1.7;
+  }
+
+  /* rewrite card */
+  .rewrite-card {
+    padding: 24px;
+    background: #fffaf0;
+    margin-bottom: 20px;
+  }
+  .rewrite-card h2 {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .rewrite-btn {
+    display: block;
+    width: 100%;
+    background: #f4ead8;
+    border: none;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 14px;
+    color: #231a14;
+    text-align: left;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+
+  /* ---- BOTTOM LEFT: disclaimer ---- */
+  .bottom-left {
+    position: absolute;
+    bottom: 52px;
+    left: 90px;
+    width: 820px;
+  }
+  .disclaimer {
+    border-top: 1px solid #2d2118;
+    color: #735f4e;
+    font-size: 12px;
+    padding-top: 12px;
+    line-height: 1.7;
+  }
+
+  /* ---- PROJECT INFO — subtle bottom strip ---- */
+  .project-strip {
+    position: absolute;
+    bottom: 52px;
+    left: 960px;
+    right: 300px;
+    border-top: 1px solid rgba(45,33,24,0.2);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .project-strip .name {
+    font-size: 28px;
+    font-weight: 900;
+    color: #231a14;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .project-strip .desc {
+    font-size: 11px;
+    color: #735f4e;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .project-strip .demo {
+    text-align: right;
+  }
+  .project-strip .demo .label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #735f4e;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .project-strip .demo .url {
+    font-size: 16px;
+    font-weight: 700;
+    color: #231a14;
+    margin-top: 2px;
+  }
+
+  /* ---- SEAL — bottom right corner ---- */
+  .seal-wrap {
+    position: absolute;
+    bottom: 40px;
+    right: 70px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .round-stamp {
+    width: 140px;
+    height: 140px;
+    border: 4px double #b52d26;
+    border-radius: 50%;
+    color: #b52d26;
+    font-size: 22px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(-12deg);
+    letter-spacing: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="cert-header">
+    <div>
+      <p class="eyebrow">End of Game Certificate</p>
+      <div class="cert-title">结 局 报 告</div>
+    </div>
+    <div class="case-info">
+      <div class="row"><span class="label">Case No.</span><div class="value">VL-2026-A7X3</div></div>
+      <div class="row"><span class="label">Status</span><div class="value" style="color:#b52d26;">VOID</div></div>
+    </div>
+  </div>
+
+  <!-- Cert grid -->
+  <div class="cert-grid">
+    <div class="cert-cell">
+      <span class="label">档案编号 Case ID</span>
+      <span class="value">VL-A7X3</span>
+    </div>
+    <div class="cert-cell">
+      <span class="label">档案代号 Alias</span>
+      <span class="value">匿名档案员 #4091</span>
+    </div>
+    <div class="cert-cell">
+      <span class="label">预计结局年龄 Est. Age</span>
+      <span class="value">73.4 岁</span>
+    </div>
+    <div class="cert-cell">
+      <span class="label">主要结局原因 Primary Cause</span>
+      <span class="value">代谢系统慢性透支</span>
+    </div>
+    <div class="cert-cell">
+      <span class="label">最后一句话 Last Words</span>
+      <span class="value">"明天再说吧。"</span>
+    </div>
+    <div class="cert-cell">
+      <span class="label">数据保存 Storage</span>
+      <span class="value">已写入病友池</span>
+    </div>
+  </div>
+
+  <!-- Cert body -->
+  <div class="cert-body">
+    <h3>病程伏笔 Foreshadow</h3>
+    <p>长期外卖与久坐形成的代谢负债正在以复利计算，深夜的屏幕蓝光和咖啡因依赖让胰岛素分泌时间表彻底混乱。你的身体正在用炎症指标写一封没有收件人的辞职信。</p>
+    <h3>墓志铭草稿 Epitaph</h3>
+    <p>这个人一生最大的成就是把睡眠从八小时压缩到了四小时，并认为这是一种效率提升。</p>
+  </div>
+
+  <!-- Tags -->
+  <div class="tag-row">
+    <span class="tag">熬夜重灾区</span>
+    <span class="tag">外卖依赖</span>
+    <span class="tag">代谢风险边缘</span>
+    <span class="tag">久坐高危</span>
+    <span class="tag">压力内化型</span>
+  </div>
+
+  <!-- Right: Twin match -->
+  <div class="right-col">
+    <article class="twin-card">
+      <p class="eyebrow">Twin Match</p>
+      <h2>深夜编译员 #2847</h2>
+      <div class="match-score">
+        <span>87%</span>
+        <small>路径相似度</small>
+      </div>
+      <p>你们都属于「外卖代谢综合体」附近的宇宙。TA 的健康标签：熬夜重灾区、咖啡因依赖、情绪代偿型。</p>
+    </article>
+
+    <article class="rewrite-card">
+      <p class="eyebrow">Rewrite the Ending</p>
+      <h2>重写结局</h2>
+      <button class="rewrite-btn" type="button">睡眠改成必修</button>
+      <button class="rewrite-btn" type="button">饭后散步补丁</button>
+      <button class="rewrite-btn" type="button">下班心率结界</button>
+    </article>
+  </div>
+
+  <!-- Seal — bottom right corner -->
+  <div class="seal-wrap">
+    <svg viewBox="0 0 200 200" width="200" height="200">
+      <defs>
+        <path id="topArc" d="M100,100 m-75,0 a75,75 0 1,1 150,0 a75,75 0 1,1 -150,0"/>
+        <path id="btmArc" d="M100,100 m75,0 a75,75 0 1,1 -150,0 a75,75 0 1,1 150,0"/>
+        <filter id="rough">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <g transform="rotate(-8, 100, 100)" filter="url(#rough)" opacity="0.85">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="#b52d26" stroke-width="5"/>
+        <circle cx="100" cy="100" r="84" fill="none" stroke="#b52d26" stroke-width="1.5" opacity="0.5"/>
+        <circle cx="100" cy="100" r="56" fill="none" stroke="#b52d26" stroke-width="1.5" opacity="0.4"/>
+        <polygon points="100,52 106,74 130,74 111,88 117,110 100,96 83,110 89,88 70,74 94,74"
+                 fill="#b52d26" opacity="0.6"/>
+        <text fill="#b52d26" font-family="'Noto Serif SC',serif" font-size="13" font-weight="900" letter-spacing="4" opacity="0.8">
+          <textPath href="#topArc" startOffset="25%" text-anchor="middle">VERYLONG</textPath>
+        </text>
+        <text fill="#b52d26" font-family="'Noto Serif SC',serif" font-size="11" font-weight="800" letter-spacing="3" opacity="0.7">
+          <textPath href="#btmArc" startOffset="25%" text-anchor="middle">END OF GAME</textPath>
+        </text>
+        <text x="100" y="136" text-anchor="middle" fill="#b52d26" font-family="'Noto Serif SC',serif" font-size="20" font-weight="900" letter-spacing="4" opacity="0.8">结局认证</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Bottom left: disclaimer -->
+  <div class="bottom-left">
+    <p class="disclaimer">娱乐模拟与健康教育用途，不构成医学诊断、治疗建议或真实寿命预测。所有数据匿名处理。</p>
+  </div>
+
+  <!-- Bottom right: project info strip -->
+  <div class="project-strip">
+    <div>
+      <div class="name">verylong</div>
+      <div class="desc">Longevity Hackathon Project<br>间接问卷 → AI 风险建模 → 结局报告 → Twin 匹配</div>
+    </div>
+    <div class="demo">
+      <div class="label">Live Demo</div>
+      <div class="url">verylong.vercel.app</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
