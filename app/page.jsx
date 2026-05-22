@@ -247,10 +247,7 @@ export default function Home() {
               <article className="profile-card">
                 <p className="eyebrow">Doom Profile</p>
                 <h2>{result.profile.archetype}</h2>
-                <p>
-                  你的档案看起来像一部由生活习惯、家族群提醒和凌晨屏幕亮度共同编剧的长篇连续剧。
-                  主线不是疾病预言，而是一个可以被改写的健康喜剧。
-                </p>
+                <p>{result.profile.profileSummary}</p>
                 <div className="tag-row">
                   {result.profile.publicHealthTags.map((tag) => (
                     <span key={tag}>{tag}</span>
